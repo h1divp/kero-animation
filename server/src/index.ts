@@ -1,5 +1,8 @@
 import express from 'express'
+
 import 'dotenv/config';
+import { Post } from './types/Post'
+import { getPosts, getPostById, getPostsByAuthorId } from './actions/getPosts'
 
 const app = express()
 const port = process.env.port
@@ -11,12 +14,29 @@ app.get('/', (req, res) => {
 })
 
 app.get('/posts', async (req, res) => {
-    res.send('Posts')
+    try {
+        // Get messages from Firestore
+        let posts: Post[] | Partial<Post>[] = [];
+        if (req.originalUrl === '/posts') {
+            posts = await getPosts()
+        } else if (req.query.postId && typeof req.query.postId === 'string') {
+            const post: Post = await getPostById(req.query.postId)
+            if (post) posts.push(post)
+        } else if (req.query.authorId && typeof req.query.authorId === 'string') {
+            posts = await getPostsByAuthorId(req.query.authorId)
+        } else {
+            console.error("Invalid path")
+        }
+        res.json(posts)
+    } catch (err) {
+        console.error(`Error sending <GET /posts> request: ${err.message}`)
+    }
 })
 
-// app.post('/messages', async (req, res) => {
-// })
-//
+app.post('/messages', async (req, res) => {
+
+})
+
 // app.delete('/messages', async (req, res) => {
 // })
 //

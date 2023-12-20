@@ -3,6 +3,7 @@ import express from 'express'
 import 'dotenv/config';
 import { Post } from './types/Post'
 import { getPosts, getPostById, getPostsByAuthorId } from './actions/getPosts'
+import { createPost } from './actions/createPost'
 
 const app = express()
 const port = process.env.port
@@ -33,7 +34,27 @@ app.get('/posts', async (req, res) => {
     }
 })
 
-app.post('/messages', async (req, res) => {
+app.post('/posts', async (req, res) => {
+    try {
+        const timeCreated = Number(req.body.timeCreated)
+        if(isNaN(timeCreated)) throw new Error(`The timeSent parameter must be a valid integer`);
+
+        const body = req.body
+        await createPost(
+            body.postId.toString(),
+            body.authorId.toString(),
+            body.frogUrl.toString(),
+            Number(body.timeCreated),
+            Number(body.star1),
+            Number(body.star2),
+            Number(body.star3),
+            Number(body.star4),
+        )
+        res.json({"success":""})
+    } catch (err) {
+        console.error(`Error sending <POST /posts> request: ${err.message}`)
+        res.json({"errorType":2,"errorMsg":"Could not create post."})
+    }
 
 })
 

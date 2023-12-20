@@ -24,7 +24,7 @@ import { Post } from '../types/Post'
 import { User } from '../types/User'
 
 // Export collections
-export const messages = createCollection<Post>('posts')
+export const posts = createCollection<Post>('posts')
 export const users = createCollection<User>('users')
 
 console.log("Database synced")

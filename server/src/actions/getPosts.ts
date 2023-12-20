@@ -6,7 +6,7 @@ import { Post } from '../types/Post'
 export const getPosts = async () => {
   const searchLimit = 100 // only retrieve 100 posts at max
   const ref = collection(firestore, "posts")
-  const q = query(ref, orderBy("timeCreated"), limit(searchLimit))
+  const q = query(ref, orderBy("timeCreated", "desc"), limit(searchLimit))
   const postDocs = await getDocs(q)
   const postObjs: Partial<Post>[] = [];
 

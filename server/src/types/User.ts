@@ -1,7 +1,8 @@
 export interface User {
     displayName: string
     avatarUrl: string
-    postIdCollection: string
+    bio: string
+    postIdCollection: Array<string>
     timeCreated: number
     star1: number
     star2: number

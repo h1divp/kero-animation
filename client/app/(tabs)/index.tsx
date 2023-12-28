@@ -1,58 +1,41 @@
-import { StyleSheet, Dimensions, SafeAreaView, StatusBar, FlatList, Image } from 'react-native';
+import { StyleSheet, Dimensions, SafeAreaView, StatusBar, FlatList, Image } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { ref, list, getDownloadURL } from 'firebase/storage'
 
-import { Text, View } from '../../components/Themed';
+import { Text, View } from '../../components/Themed'
+import { storage } from '../../utilities/firebaseInit'
 
-const DATA = [
-    {
-        imgUrl: "hehehe"
-    },
-    {
-        imgUrl: "hehehe"
-    },
-    {
-        imgUrl: "hehehe"
-    },
-    {
-        imgUrl: "hehehe"
-    },
-    {
-        imgUrl: "hehehe"
-    },
-    {
-        imgUrl: "hehehe"
-    },
-    {
-        imgUrl: "hehehe"
-    },
-    {
-        imgUrl: "hehehe"
-    },
-    {
-        imgUrl: "hehehe"
-    },
-    {
-        imgUrl: "hehehe"
-    },
-    {
-        imgUrl: "hehehe"
-    },
-    {
-        imgUrl: "hehehe"
-    },
-]
-
-type PostProps = {imgUrl: string};
+type PostProps = {imgUrl: string}
 const Post = ({imgUrl}: PostProps) => (
     <View style={styles.post}>
-        <Image style={styles.image} source={require("../../assets/images/kero.jpg")} />
+        <Image style={styles.image} source={{uri: imgUrl}} />
     </View>
 )
 
 export default function IndexScreen() {
+  const [data, setData] = useState<Array<{imgUrl: string}>>([])
+  useEffect(() => {
+      setData([]) // clear data to prevent duplicates
+      const fetchPosts = async () => {
+          console.log('flag')
+          // const listRef = ref(storage, 'images')
+          // const imageUrls = await list(listRef, { maxResults: 20 })
+          // console.log(imageUrls)
+
+          getDownloadURL(ref(storage, 'images/kero.jpg')).then(url => {
+              const urlData: {imgUrl: string} = {imgUrl: url}
+              console.log(urlData)
+              setData(oldData => [...oldData, urlData])
+          })
+        
+      }
+      fetchPosts();
+  }, [])
+
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
         <FlatList
-            data={DATA}
+            data={data}
             renderItem={({item}) => <Post imgUrl={item.imgUrl} />}
             numColumns={2}
             columnWrapperStyle={styles.postList}
@@ -61,7 +44,7 @@ export default function IndexScreen() {
             keyExtractor={item => item.imgUrl}
         />
     </SafeAreaView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -70,6 +53,7 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 0,
     marginLeft: 5,
     marginRight: 5,
+    backgroundColor: '#fff'
   },
   postList: {
     justifyContent: 'space-between',

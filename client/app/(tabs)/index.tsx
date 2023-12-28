@@ -14,20 +14,37 @@ const Post = ({imgUrl}: PostProps) => (
 
 export default function IndexScreen() {
   const [data, setData] = useState<Array<{imgUrl: string}>>([])
+
+  const getPostData = async () => {
+    const serverUrl = process.env.EXPO_PUBLIC_SERVER_URL
+    const serverPort = process.env.EXPO_PUBLIC_SERVER_PORT
+    const postData = await fetch(`${serverUrl}:${serverPort}/posts`, {
+        method: "GET",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        referrerPolicy: "same-origin",
+    })
+    return postData.json()
+  }
+
   useEffect(() => {
       setData([]) // clear data to prevent duplicates
       const fetchPosts = async () => {
-          console.log('flag')
-          // const listRef = ref(storage, 'images')
-          // const imageUrls = await list(listRef, { maxResults: 20 })
-          // console.log(imageUrls)
-
-          getDownloadURL(ref(storage, 'images/kero.jpg')).then(url => {
-              const urlData: {imgUrl: string} = {imgUrl: url}
-              console.log(urlData)
-              setData(oldData => [...oldData, urlData])
-          })
-        
+          try {
+              const postData = await getPostData()
+              for (const post of postData) {
+                  const thumbPath: string = post.frogUrl
+                  getDownloadURL(ref(storage, thumbPath)).then(url => {
+                      const urlData: {imgUrl: string} = {imgUrl: url}
+                      console.log(urlData)
+                      setData(oldData => [...oldData, urlData])
+                  })
+              }
+          } catch(err) {
+              console.error(err)
+          }
       }
       fetchPosts();
   }, [])
@@ -60,11 +77,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   post: {
-    // alignItems: 'center',
     marginBottom: 10,
     width: Dimensions.get('window').width / 2 - 10,
     height: 160,
-    // backgroundColor: '#fff',
     borderRadius: 10,
     borderStyle: 'solid',
     borderWidth: 2,

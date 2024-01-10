@@ -1,0 +1,11 @@
+# Firebase config
+apiKey = 
+authDomain = 
+projectId = 
+storageBucket = 
+messagingSenderId = 
+appId = 
+
+# Misc
+port = 3001
+

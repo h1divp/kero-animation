@@ -1,18 +1,21 @@
-import { StyleSheet, Dimensions, SafeAreaView, StatusBar, FlatList, Image } from 'react-native'
+import { StyleSheet, Dimensions, SafeAreaView, StatusBar, FlatList, Image, TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { ref, list, getDownloadURL } from 'firebase/storage'
+import { Link } from 'expo-router'
 
-import { Text, View } from '../../components/Themed'
-import { storage } from '../../utilities/firebaseInit'
+import { Text, View } from '../../../components/Themed'
+import { storage } from '../../../utilities/firebaseInit'
 
 type PostProps = {imgUrl: string}
 const Post = ({imgUrl}: PostProps) => (
-    <View style={styles.post}>
-        <Image style={styles.image} source={{uri: imgUrl}} />
-    </View>
+    <Link href='./post' asChild>
+        <TouchableOpacity style={styles.post}>
+            <Image style={styles.image} source={{uri: imgUrl}} />
+        </TouchableOpacity>
+    </Link>
 )
 
-export default function IndexScreen() {
+export default function World() {
   const [data, setData] = useState<Array<{imgUrl: string}>>([])
 
   const getPostData = async () => {
@@ -38,7 +41,6 @@ export default function IndexScreen() {
                   const thumbPath: string = post.frogUrl
                   getDownloadURL(ref(storage, thumbPath)).then(url => {
                       const urlData: {imgUrl: string} = {imgUrl: url}
-                      console.log(urlData)
                       setData(oldData => [...oldData, urlData])
                   })
               }

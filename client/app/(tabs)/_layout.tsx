@@ -30,9 +30,9 @@ export default function TabLayout() {
             },
           }}>
           <Tabs.Screen
-            name="index"
+            name="(stack)"
             options={{
-              title: 'World',
+              title: 'index',
               tabBarIcon: ({ color }) => <TabBarIcon name="image" color={color} />,
             }}
           />
